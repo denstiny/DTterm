@@ -1,0 +1,11 @@
+- glsl
+ - glsl font
+- terminal window
+ - show font
+  - stoe font
+  - im 
+   - cursor pos
+ - cursor
+ - smoothing cursor
+ - gpt
+
