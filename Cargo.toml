@@ -1,0 +1,19 @@
+[package]
+name = "DTerm"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+raylib = "5.0.1"
+lazy_static = "1.4.0"
+font-kit = "0.13.2"
+config = "0.14.0"
+expectrl = "0.7.1"
+lru = "0.12.3"
+portable-pty = "0.8.1"
+termwiz = "0.22.0"
+serde = "1.0.145"
+toml = "0.8.14"
+
+ascliparse = {path= "./ascliparse"}
+
