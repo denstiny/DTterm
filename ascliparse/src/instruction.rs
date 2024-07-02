@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
+use std::collections::HashMap;
+
 pub const PARENT: u8 = b'\x1b'; // 指令前缀
 pub const BEGIN: u8 = b'[';
 pub const END: u8 = b']';
@@ -10,9 +12,9 @@ pub const END: u8 = b']';
 pub enum AscliInstruction {
     // -- 前置符号
     PARENT = b'\x1b', // 机灵前缀
-    BEGIN = b'[',     // 结束之前的指令
+    BEGIN = b'[',     // 设置样式
     END = b']',       // 指令开始
-    PRIVATE = 63,     // 私有模式
+    PRIVATE = b'?',   // 私有模式
 
     // --后置指令描述符号
     COLOR = b'm',     // 设置颜色
@@ -31,7 +33,7 @@ impl From<u8> for AscliInstruction {
             b'\x1b' => AscliInstruction::PARENT,
             b'[' => AscliInstruction::BEGIN,
             b']' => AscliInstruction::END,
-            63 => AscliInstruction::PARENT,
+            b'?' => AscliInstruction::PRIVATE,
             b'm' => AscliInstruction::COLOR,
             b'A' => AscliInstruction::MoveUp,
             b'B' => AscliInstruction::MoveDown,

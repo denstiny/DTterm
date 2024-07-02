@@ -5,7 +5,6 @@ use font_kit::properties::Style;
 use raylib::{math::Vector2, RaylibHandle, RaylibThread};
 
 use crate::{
-    buffer::Buffer,
     font::FontCache,
     pty::Pty,
     utils::{self, get_key_pressed, get_mouse_wheel_move},
@@ -24,7 +23,6 @@ type MFontCache = Mutex<FontCache>;
 pub struct Window {
     rayhead: Rayhead,
     raythread: RayThread,
-    text_buffer: Arc<Mutex<Buffer>>,
     cursor: Vector2,
     pty: Pty,
     font_cache: MFontCache,
@@ -38,9 +36,8 @@ impl Window {
         Self {
             rayhead: Arc::new(Mutex::new(rl)),
             raythread: Arc::new(thread),
-            text_buffer: Arc::new(Mutex::new(Buffer::new())),
             cursor: Vector2::zero(),
-            pty: Pty::new("bash", 100, 100).start_reader(),
+            pty: Pty::new("zsh", 100, 100).start_reader(),
             font_cache: Mutex::new(FontCache::new()),
             roll: Rc::new(Cell::new(f32::default())),
         }
@@ -120,7 +117,7 @@ impl Window {
             .unwrap();
 
         let mut row = 0.0;
-        let col = 0.0;
+        let mut col = 0.0;
         let scren_width = head.get_screen_width() as f32;
         for node in pty.get_buffer() {
             let size = utils::measuretextex(*font, &node.chars, font_size as f32, 1.0);
@@ -135,7 +132,11 @@ impl Window {
                 1.0,
                 Color::RED,
             );
-            row += size.y;
+            col += size.x;
+            if utils::inspect_wrap(node.chars) {
+                row += size.y;
+                col = 0.0;
+            }
         }
     }
 }

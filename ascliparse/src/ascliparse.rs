@@ -1,59 +1,61 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
-use std::u8;
-
-use crate::{instruction::AscliInstruction, textnode::TextNode};
+use crate::{instruction::AscliInstruction, param_parse::PramParse, textnode::TextNode};
 
 pub trait Ascliparse {
-    fn channel(nodes: &mut Vec<TextNode>, cursor: &mut (i32, i32), chars: Vec<u8>) {
-        let mut result: Vec<u8> = Vec::new();
+    fn channel(nodes: &mut Vec<TextNode>, chars: Vec<u8>) {
         let mut instant = AscliInstruction::TEXT;
-        let mut param: Vec<u8> = Vec::new();
+        let mut param = PramParse::new();
         let mut stack_state: Vec<TextNode> = Vec::new();
-        stack_state.push(TextNode::new());
         println!("原始: {:?}", chars.to_owned());
 
         for i in chars {
             if i == AscliInstruction::PARENT as u8 {
-                instant = AscliInstruction::PARENT;
-            } else if instant == AscliInstruction::PARENT {
-                instant = AscliInstruction::from(i);
-            } else if instant == AscliInstruction::BEGIN {
-                if i == AscliInstruction::COLOR as u8 {
-                    //println!("param -> {}", String::from_utf8(param.to_owned()).unwrap());
-                    param.clear();
-                    instant = AscliInstruction::TEXT
-                } else if i == AscliInstruction::MoveRight as u8 {
-                    param.clear();
-                } else if i == AscliInstruction::MoveLeft as u8 {
-                    param.clear();
-                } else if i == AscliInstruction::MoveUp as u8 {
-                    param.clear();
-                } else if i == AscliInstruction::MoveDown as u8 {
-                    param.clear();
-                } else if i == AscliInstruction::PRIVATE as u8 {
-                    param.clear();
-                    instant = AscliInstruction::PRIVATE
-                } else {
-                    param.push(i);
-                }
-            } else if instant == AscliInstruction::PRIVATE {
-                if i == b'l' {
-                    println!("param -> {}", String::from_utf8(param.to_owned()).unwrap());
-                } else if i == b'h' {
-                    println!("param -> {}", String::from_utf8(param.to_owned()).unwrap());
-                } else {
-                    param.push(i)
-                }
-            } else if instant == AscliInstruction::END {
-                instant = AscliInstruction::TEXT
+                instant = AscliInstruction::PARENT
             } else {
-                result.push(i);
+                match instant {
+                    AscliInstruction::PARENT => {
+                        instant = AscliInstruction::from(i);
+                        stack_state.push(TextNode::new());
+                    }
+                    AscliInstruction::BEGIN => {
+                        if let Some(arg) = param.parse(i) {
+                            match param.get_type() {
+                                AscliInstruction::COLOR => {
+                                    instant = AscliInstruction::TEXT;
+                                }
+                                _ => {
+                                    //for v in arg {
+                                    //    println!("{:?} {}", param.get_type(), v);
+                                    //}
+                                    instant = AscliInstruction::TEXT
+                                }
+                            };
+                        }
+                    }
+                    AscliInstruction::END => instant = AscliInstruction::TEXT,
+                    AscliInstruction::TEXT | AscliInstruction::VAIN => {
+                        print!("{}", i as char);
+                        if let Some(node) = stack_state.last_mut() {
+                            node.chars.push(i);
+                            if i == b'\n' {
+                                stack_state.push(TextNode::new());
+                            }
+                        }
+                    }
+                    _ => {}
+                }
             }
         }
 
-        println!("result {}", String::from_utf8(result).unwrap());
+        let mut new_nodes = stack_state
+            .iter()
+            .filter(|&x| !x.chars.is_empty())
+            .cloned()
+            .collect::<Vec<TextNode>>();
+        //println!("结果: {:?}", new_nodes);
+        nodes.append(&mut new_nodes);
     }
 }
 

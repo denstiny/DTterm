@@ -23,7 +23,7 @@ impl Buffer {
     }
 
     pub fn put(&mut self, c: Vec<u8>) {
-        Self::channel(&mut self.cache, &mut self.cur_node, c);
+        Self::channel(&mut self.cache, c);
     }
 
     pub fn get(&self) -> Vec<TextNode> {

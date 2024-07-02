@@ -60,6 +60,24 @@ pub fn draw_text_ex(
     }
 }
 
+/// 检查是否需要换行
+///
+/// * `chars`: 字符ascli编码串
+pub fn inspect_wrap(chars: Vec<u8>) -> bool {
+    if !chars.is_empty() {
+        if chars.len() > 1 && chars[chars.len() - 2..].to_owned() == b"\r\n" {
+            return true;
+        } else {
+            if let Some(&c) = chars.last() {
+                if c == b'\r' || c == b'\n' {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
 pub fn measuretextex(font: ffi::Font, text: &Vec<u8>, font_size: f32, space: f32) -> ffi::Vector2 {
     let c_text = CString::new(text.to_owned()).unwrap();
     unsafe { MeasureTextEx(font, c_text.as_ptr(), font_size, space) }
