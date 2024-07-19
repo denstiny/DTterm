@@ -37,7 +37,7 @@ impl Window {
             rayhead: Arc::new(Mutex::new(rl)),
             raythread: Arc::new(thread),
             cursor: Vector2::zero(),
-            pty: Pty::new("zsh", 100, 100).start_reader(),
+            pty: Pty::new("sh", 100, 100).start_reader(),
             font_cache: Mutex::new(FontCache::new()),
             roll: Rc::new(Cell::new(f32::default())),
         }

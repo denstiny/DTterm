@@ -3,6 +3,7 @@
 use std::{
     collections::HashMap,
     io::{Read, Write},
+    process::exit,
     sync::{
         mpsc::{self, Receiver, Sender},
         Arc, Mutex,
@@ -73,6 +74,9 @@ impl Pty {
             loop {
                 match reader.lock().unwrap().read(&mut buffer) {
                     Ok(size) => {
+                        if size == 0 {
+                            exit(0);
+                        }
                         //if let Ok(message) = String::from_utf8(buffer[..size].to_vec()) {
                         //    text_buffer.lock().unwrap().put(message.clone());
                         //    print!("{}", message);
@@ -81,7 +85,7 @@ impl Pty {
                         //println!("进程状态: {:?}", child.lock().unwrap().process_id());
                     }
                     Err(e) => {
-                        println!("{}", e.to_string());
+                        println!("读取失败 {}", e.to_string());
                     }
                 };
             }

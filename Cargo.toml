@@ -11,9 +11,9 @@ config = "0.14.0"
 expectrl = "0.7.1"
 lru = "0.12.3"
 portable-pty = "0.8.1"
-termwiz = "0.22.0"
 serde = "1.0.145"
 toml = "0.8.14"
+anstyle-parse = "0.2.4"
 
 ascliparse = {path= "./ascliparse"}
 

@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 raylib = "5.0.1"
 lazy_static = "1.4.0"
+anstyle-parse = "0.2.4"

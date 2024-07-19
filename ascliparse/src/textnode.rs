@@ -42,8 +42,8 @@ impl Default for TextNode {
 }
 
 impl TextNode {
-    pub fn push(&mut self, c: &u8) {
-        self.chars.push(*c)
+    pub fn push(&mut self, c: u8) {
+        self.chars.push(c)
     }
     pub fn new() -> Self {
         Self::default()

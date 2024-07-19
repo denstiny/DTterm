@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
-use std::collections::HashMap;
-
 pub const PARENT: u8 = b'\x1b'; // 指令前缀
 pub const BEGIN: u8 = b'[';
 pub const END: u8 = b']';
